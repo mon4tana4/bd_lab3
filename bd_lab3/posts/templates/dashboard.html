@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-4">
+
+<h2 class="mb-4">Базы данных №3</h2>
+
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link {% if db == 'default' %}active{% endif %}"
+           href="?db=default&section=courses">University</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if db == 'accounting' %}active{% endif %}"
+           href="?db=accounting&section=departments">Accounting</a>
+    </li>
+</ul>
+
+<div class="mb-3">
+
+{% if db == "default" %}
+
+<a href="?db=default&section=courses" class="btn btn-outline-primary">Courses</a>
+<a href="?db=default&section=students" class="btn btn-outline-primary">Students</a>
+<a href="?db=default&section=enrollments" class="btn btn-outline-primary">Grades</a>
+
+<a href="?db=default&section=olap_courses" class="btn btn-outline-warning">OLAP Courses</a>
+<a href="?db=default&section=olap_students" class="btn btn-outline-warning">OLAP Students</a>
+<a href="?db=default&section=olap_years" class="btn btn-outline-warning">OLAP Years</a>
+
+<a href="?db=default&section=cube" class="btn btn-outline-dark">Cube</a>
+
+{% else %}
+
+<a href="?db=accounting&section=departments" class="btn btn-outline-primary">Departments</a>
+<a href="?db=accounting&section=budget" class="btn btn-outline-primary">Budget</a>
+
+<a href="?db=accounting&section=olap_dept" class="btn btn-outline-warning">By Department</a>
+<a href="?db=accounting&section=olap_cat" class="btn btn-outline-warning">By Category</a>
+<a href="?db=accounting&section=olap_manager" class="btn btn-outline-warning">By Manager</a>
+
+{% endif %}
+
+</div>
+
+<hr>
+
+
+{% if db == "default" %}
+
+{% if section == "courses" %}
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr><th>Course</th></tr>
+    </thead>
+    <tbody>
+        {% for c in courses %}
+        <tr><td>{{ c.course_name }}</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if section == "students" %}
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr><th>Student</th></tr>
+    </thead>
+    <tbody>
+        {% for s in students %}
+        <tr><td>{{ s.first_name }} {{ s.last_name }}</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if section == "enrollments" %}
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Grade</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for e in enrollments %}
+        <tr>
+            <td>{{ e.student.first_name }}</td>
+            <td>{{ e.course.course_name }}</td>
+            <td>{{ e.grade }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if section == "olap_courses" %}
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Course</th>
+            <th>Avg</th>
+            <th>Min</th>
+            <th>Max</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in olap_courses %}
+        <tr>
+            <td>{{ r.course__course_name }}</td>
+            <td>{{ r.avg }}</td>
+            <td>{{ r.min }}</td>
+            <td>{{ r.max }}</td>
+            <td>{{ r.count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if section == "olap_students" %}
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Avg</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in olap_students %}
+        <tr>
+            <td>{{ r.student__first_name }} {{ r.student__last_name }}</td>
+            <td>{{ r.avg }}</td>
+            <td>{{ r.count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if section == "olap_years" %}
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Year</th>
+            <th>Avg</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in olap_years %}
+        <tr>
+            <td>{{ r.year }}</td>
+            <td>{{ r.avg }}</td>
+            <td>{{ r.count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if section == "cube" %}
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Grade</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for e in cube %}
+        <tr>
+            <td>{{ e.student.first_name }}</td>
+            <td>{{ e.course.course_name }}</td>
+            <td>{{ e.grade }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% endif %}
+
+
+{% if db == "accounting" %}
+
+{% if section == "departments" %}
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Manager</th>
+            <th>Employees</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for d in departments %}
+        <tr>
+            <td>{{ d.department_id }}</td>
+            <td>{{ d.manager }}</td>
+            <td>{{ d.employee_count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if section == "budget" %}
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Department</th>
+            <th>Category</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for b in budgets %}
+        <tr>
+            <td>{{ b.department.department_id }}</td>
+            <td>{{ b.category }}</td>
+            <td>{{ b.planned_amount }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if section == "olap_dept" %}
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Department</th>
+            <th>Total</th>
+            <th>Avg</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in budget_by_department %}
+        <tr>
+            <td>{{ r.department__department_id }}</td>
+            <td>{{ r.total }}</td>
+            <td>{{ r.avg }}</td>
+            <td>{{ r.count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if section == "olap_cat" %}
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Total</th>
+            <th>Avg</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in budget_by_category %}
+        <tr>
+            <td>{{ r.category }}</td>
+            <td>{{ r.total }}</td>
+            <td>{{ r.avg }}</td>
+            <td>{{ r.count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if section == "olap_manager" %}
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Manager</th>
+            <th>Total</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in budget_by_manager %}
+        <tr>
+            <td>{{ r.department__manager }}</td>
+            <td>{{ r.total }}</td>
+            <td>{{ r.count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% endif %}
+
+</div>
+</body>
+</html>
